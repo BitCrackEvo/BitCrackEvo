@@ -148,7 +148,30 @@ namespace util {
             sprintf(s, "%02d:%02d:%02d", hours, minutes, sec);
         }
         
+        return std::string(s);
+    }
 
+    std::string formatMilliSeconds(uint64_t milliseconds) {
+        char s[128] = { 0 };
+
+        unsigned int days = milliseconds / 86400000;
+        unsigned int hours = (milliseconds % 86400000) / 3600000;
+        unsigned int minutes = (milliseconds % 3600000) / 60000;
+        unsigned int sec = (milliseconds % 60000) / 1000;
+        unsigned int millisec = milliseconds % 1000;
+
+        if(days > 0) {
+            sprintf(s, "%d:%02d:%02d:%02d.%03d", days, hours, minutes, sec, millisec);
+        } else if (hours > 0) {
+            sprintf(s, "%02d:%02d:%02d.%03d", hours, minutes, sec, millisec);
+        } else if (minutes > 0) {
+            sprintf(s, "%02d:%02d.%03d", minutes, sec, millisec);
+        } else if (sec > 0) {
+            sprintf(s, "%02d.%03d", sec, millisec);
+        } else {
+            sprintf(s, ".%03d", millisec);
+        }
+        
         return std::string(s);
     }
 

@@ -97,6 +97,9 @@ void CudaKeySearchDevice::generateStartingPoints()
     uint64_t totalPoints = (uint64_t)_pointsPerThread * _threads * _blocks;
     uint64_t totalMemory = totalPoints * 40;
 
+    util::Timer generateStartingPointsTimer;
+    generateStartingPointsTimer.start();
+
     std::vector<secp256k1::uint256> exponents;
 
     Logger::log(LogLevel::Info, "Generating " + util::formatThousands(totalPoints) + " starting points (" + util::format("%.1f", (double)totalMemory / (double)(1024 * 1024)) + "MB)");
@@ -124,7 +127,7 @@ void CudaKeySearchDevice::generateStartingPoints()
         }
     }
 
-    Logger::log(LogLevel::Info, "Done");
+    Logger::log(LogLevel::Info, "Done in " + util::formatMilliSeconds(generateStartingPointsTimer.getTime()));
 
     _deviceKeys.clearPrivateKeys();
 }

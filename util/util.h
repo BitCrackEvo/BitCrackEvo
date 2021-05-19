@@ -23,6 +23,7 @@ void sleep(int seconds);
 
 std::string formatThousands(uint64_t x);
 std::string formatSeconds(unsigned int seconds);
+std::string formatMilliSeconds(uint64_t milliseconds);
 
 uint32_t parseUInt32(std::string s);
 uint64_t parseUInt64(std::string s);
