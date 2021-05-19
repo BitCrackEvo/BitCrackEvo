@@ -189,7 +189,7 @@ bool parseKeyspace(const std::string &s, secp256k1::uint256 &start, secp256k1::u
 
 void usage()
 {
-    printf("BitCrack OPTIONS [TARGETS]\n");
+    printf("BitCrackEvo OPTIONS [TARGETS]\n");
     printf("Where TARGETS is one or more addresses\n\n");
 	
     printf("--help                  Display this message\n");
