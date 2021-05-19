@@ -1,4 +1,6 @@
-### Hi there 👋
+### BtCrackEvo Project
+
+- Fork from initial [brichard19](https://github.com/brichard19) project [BitCrack](https://github.com/brichard19/BitCrack).
 
 <!--
 **BitCrackEvo/BitCrackEvo** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
