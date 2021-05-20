@@ -95,26 +95,14 @@ void CudaKeySearchDevice::init(const secp256k1::uint256 &start, int compression,
 void CudaKeySearchDevice::generateStartingPoints()
 {
     uint64_t totalPoints = (uint64_t)_pointsPerThread * _threads * _blocks;
-    uint64_t totalMemory = totalPoints * 40;
+    uint64_t totalMemory = totalPoints * 30;
 
     util::Timer generateStartingPointsTimer;
     generateStartingPointsTimer.start();
 
-    std::vector<secp256k1::uint256> exponents;
-
     Logger::log(LogLevel::Info, "Generating " + util::formatThousands(totalPoints) + " starting points (" + util::format("%.1f", (double)totalMemory / (double)(1024 * 1024)) + "MB)");
 
-    // Generate key pairs for k, k+1, k+2 ... k + <total points in parallel - 1>
-    secp256k1::uint256 privKey = _startExponent;
-
-    exponents.push_back(privKey);
-
-    for(uint64_t i = 1; i < totalPoints; i++) {
-        privKey = privKey.add(_stride);
-        exponents.push_back(privKey);
-    }
-
-    cudaCall(_deviceKeys.init(_blocks, _threads, _pointsPerThread, exponents));
+    cudaCall(_deviceKeys.init(_blocks, _threads, _pointsPerThread, _startExponent, _stride));
 
     // Show progress in 10% increments
     double pct = 10.0;
@@ -129,9 +117,15 @@ void CudaKeySearchDevice::generateStartingPoints()
 
     Logger::log(LogLevel::Info, "Done in " + util::formatMilliSeconds(generateStartingPointsTimer.getTime()));
 
+    // For test only
+    if(_blocks <=2 && _pointsPerThread <= 16) {
+        if(_deviceKeys.selfTest(_startExponent, _stride)) {
+            Logger::log(LogLevel::Info, "Self test done. All points are OK.");
+        }
+    }
+
     _deviceKeys.clearPrivateKeys();
 }
-
 
 void CudaKeySearchDevice::setTargets(const std::set<KeySearchTarget> &targets)
 {

@@ -17,13 +17,13 @@ private:
 
 	int _pointsPerThread;
 
+	unsigned long _totalPoints;
+
 	unsigned int _numKeys;
 
 	unsigned int *_devX;
 
 	unsigned int *_devY;
-
-	unsigned int *_devPrivate;
 
 	unsigned int *_devChain;
 
@@ -53,7 +53,6 @@ public:
 		_numKeys = 0;
 		_devX = NULL;
 		_devY = NULL;
-		_devPrivate = NULL;
 		_devChain = NULL;
 		_devBasePointX = NULL;
 		_devBasePointY = NULL;
@@ -66,9 +65,9 @@ public:
 		clearPrivateKeys();
 	}
 
-	cudaError_t init(int blocks, int threads, int pointsPerThread, const std::vector<secp256k1::uint256> &privateKeys);
+	cudaError_t init(int blocks, int threads, int pointsPerThread, const secp256k1::uint256 &privateKey, const secp256k1::uint256 &stride);
 
-	bool selfTest(const std::vector<secp256k1::uint256> &privateKeys);
+	bool selfTest(const secp256k1::uint256 &startExponent, const secp256k1::uint256 &stride);
 
 	cudaError_t doStep();
 
