@@ -95,7 +95,7 @@ void CudaKeySearchDevice::init(const secp256k1::uint256 &start, int compression,
 void CudaKeySearchDevice::generateStartingPoints()
 {
     uint64_t totalPoints = (uint64_t)_pointsPerThread * _threads * _blocks;
-    uint64_t totalMemory = totalPoints * 30;
+    uint64_t totalMemory = totalPoints * (8*4*3);
 
     util::Timer generateStartingPointsTimer;
     generateStartingPointsTimer.start();
