@@ -26,7 +26,7 @@ jobs:
 #    - name: configure
 #      run: ./configure
       - name: make
-        run: make
+        run: make BUILD_CUDA=1 BUILD_OPENCL=1
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
