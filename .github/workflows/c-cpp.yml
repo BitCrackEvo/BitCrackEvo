@@ -1,0 +1,30 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: Jimver/cuda-toolkit@v0.2.1
+      id: cuda-toolkit
+      with:
+        cuda: '11.2.2'
+    - run: echo "Installed cuda version is: ${{steps.cuda-toolkit.outputs.cuda}}"
+    - run: echo "Cuda install location: ${{steps.cuda-toolkit.outputs.CUDA_PATH}}"
+    - run: nvcc -V
+    - uses: actions/checkout@v2
+#    - name: configure
+#      run: ./configure
+     - name: make
+       run: make
+#    - name: make check
+#      run: make check
+#    - name: make distcheck
+#      run: make distcheck
