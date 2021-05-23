@@ -12,10 +12,26 @@ LIBS+=-L$(LIBDIR)
 CXX=g++
 CXXFLAGS=-O2 -std=c++11
 
+# CUDA Gencode arguments
+COMPUTE_CAP ?= 52 60 61 70 75 80 86
+ifeq ($(COMPUTE_CAP),)
+$(info >>> WARNING - no SM architectures have been specified - waiving sample <<<)
+endif
+
+ifeq ($(GENCODE_FLAGS),)
+# Generate SASS code for each SM architecture listed in $(SMS)
+$(foreach sm,$(COMPUTE_CAP),$(eval GENCODE_FLAGS += -gencode arch=compute_$(sm),code=sm_$(sm)))
+
+# Generate PTX code from the highest SM architecture in $(SMS) to guarantee forward-compatibility
+HIGHEST_SM := $(lastword $(sort $(COMPUTE_CAP)))
+ifneq ($(HIGHEST_SM),)
+GENCODE_FLAGS += -gencode arch=compute_$(HIGHEST_SM),code=compute_$(HIGHEST_SM)
+endif
+endif
+
 # CUDA variables
-COMPUTE_CAP=61
 NVCC=nvcc
-NVCCFLAGS=-std=c++11 -gencode=arch=compute_${COMPUTE_CAP},code=\"sm_${COMPUTE_CAP}\" -Xptxas="-v" -Xcompiler "${CXXFLAGS}"
+NVCCFLAGS=-std=c++11 ${GENCODE_FLAGS} -Xptxas="-v" -Xcompiler "${CXXFLAGS}"
 CUDA_HOME=/usr/local/cuda
 CUDA_LIB=${CUDA_HOME}/lib64
 CUDA_INCLUDE=${CUDA_HOME}/include
