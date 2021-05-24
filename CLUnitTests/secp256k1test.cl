@@ -10,14 +10,14 @@ typedef struct {
 
 bool addTest()
 {
-    unsigned int x[8] = { 0xa4aea9b8, 0x6fe248f5, 0x1fc74965, 0xe9493264, 0x4e2dff0c, 0x009f7c9c, 0x832fa59b, 0x3361f837 };
-    unsigned int y[8] = { 0x537c13eb, 0xec1bf1f8, 0x7c25b4cf, 0xa57084ac, 0x245a823e, 0x624d20ee, 0x066cffaf, 0x4a0538f3 };
-    unsigned int z[8] = { 0xf82abda4, 0x5bfe3aed, 0x9becfe35, 0x8eb9b710, 0x7288814a, 0x62ec9d8a, 0x899ca54a, 0x7d67312a };
-    unsigned int k[8];
+    uint256_t x = { .v = { 0xa4aea9b8, 0x6fe248f5, 0x1fc74965, 0xe9493264, 0x4e2dff0c, 0x009f7c9c, 0x832fa59b, 0x3361f837 }};
+    uint256_t y = { .v = { 0x537c13eb, 0xec1bf1f8, 0x7c25b4cf, 0xa57084ac, 0x245a823e, 0x624d20ee, 0x066cffaf, 0x4a0538f3 }};
+    uint256_t z = { .v = { 0xf82abda4, 0x5bfe3aed, 0x9becfe35, 0x8eb9b710, 0x7288814a, 0x62ec9d8a, 0x899ca54a, 0x7d67312a }};
+    uint256_t k;
 
-    addModP(x, y, k);
+    k = addModP256k(x, y);
 
-    return equal(z, k);
+    return equal256k(z, k);
 }
 
 bool multiplyTest()
@@ -34,17 +34,13 @@ bool multiplyTest()
 
 bool inverseTest()
 {
-    unsigned int x[8] = { 0xa4aea9b8, 0x6fe248f5, 0x1fc74965, 0xe9493264, 0x4e2dff0c, 0x009f7c9c, 0x832fa59b, 0x3361f837 };
-    unsigned int k[8];
-    unsigned int z[8] = { 0x22a595b4, 0x5a57167e, 0x1b9426be, 0x2c9b13e1, 0x8ca6f21c, 0x1765b9a9, 0xb378bbb3, 0x9a7f38e5 };
+    uint256_t x = { .v = { 0xa4aea9b8, 0x6fe248f5, 0x1fc74965, 0xe9493264, 0x4e2dff0c, 0x009f7c9c, 0x832fa59b, 0x3361f837 }};
+    uint256_t k;
+    uint256_t z = { .v = { 0x22a595b4, 0x5a57167e, 0x1b9426be, 0x2c9b13e1, 0x8ca6f21c, 0x1765b9a9, 0xb378bbb3, 0x9a7f38e5 }};
 
-    for(int i = 0; i < 8; i++) {
-        k[i] = x[i];
-    }
+    k = invModP256k(x);
 
-    invModP(k);
-
-    return equal(z, k);
+    return equal256k(z, k);
 }
 
 void addError(__global CLErrorInfo *errInfo, __global unsigned int *numErrors, int section)
