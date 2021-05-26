@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string>
+#include <sstream>
+#include <vector>
 
 #include "util.h"
 #include "secp256k1.h"

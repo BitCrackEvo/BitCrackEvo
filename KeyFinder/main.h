@@ -71,7 +71,6 @@ static uint64_t _startTime = 0;
 
 void resultCallback(KeySearchResult info);
 void statusCallback(KeySearchStatus info);
-bool parseKeyspace(const std::string &s, secp256k1::uint256 &start, secp256k1::uint256 &end);
 
 /**
  Finds default parameters depending on the device
@@ -89,10 +88,7 @@ static KeySearchDevice *getDeviceContext(DeviceManager::DeviceInfo &device, int 
 static void printDeviceList(const std::vector<DeviceManager::DeviceInfo> &devices);
 
 bool readAddressesFromFile(const std::string &fileName, std::vector<std::string> &lines);
-int parseCompressionString(const std::string &s);
-static std::string getCompressionString(int mode);
 void writeCheckpoint(secp256k1::uint256 nextKey);
 
 void readCheckpointFile();
 int run();
-bool parseShare(const std::string &s, uint32_t &idx, uint32_t &total);

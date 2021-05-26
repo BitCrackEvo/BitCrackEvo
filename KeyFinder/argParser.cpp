@@ -39,28 +39,18 @@ bool parseKeyspace(const std::string &s, secp256k1::uint256 &start, secp256k1::u
 
 bool parseDevices(const std::string &s, secp256k1::uint256 &start, secp256k1::uint256 &end)
 {
-    size_t pos = s.find(':');
-
-    if(pos == std::string::npos) {
-        start = secp256k1::uint256(s);
-        end = secp256k1::N - 1;
-    } else {
-        std::string left = s.substr(0, pos);
-
-        if(left.length() == 0) {
-            start = secp256k1::uint256(1);
-        } else {
-            start = secp256k1::uint256(left);
-        }
-
-        std::string right = s.substr(pos + 1);
-
-        if(right[0] == '+') {
-            end = start + secp256k1::uint256(right.substr(1));
-        } else {
-            end = secp256k1::uint256(right);
-        }
+    std::vector<std::string> v;
+ 
+    std::stringstream ss(s);
+ 
+    while (ss.good()) {
+        std::string substr;
+        std::getline(ss, substr, ',');
+        v.push_back(substr);
     }
+ 
+    /*for (size_t i = 0; i < v.size(); i++)
+        std::cout << v[i] << endl;*/
 
     return true;
 }
