@@ -85,72 +85,6 @@ void statusCallback(KeySearchStatus info)
     }
 }
 
-/**
- * Parses the start:end key pair. Possible values are:
- start
- start:end
- start:+offset
- :end
- :+offset
- */
-bool parseKeyspace(const std::string &s, secp256k1::uint256 &start, secp256k1::uint256 &end)
-{
-    size_t pos = s.find(':');
-
-    if(pos == std::string::npos) {
-        start = secp256k1::uint256(s);
-        end = secp256k1::N - 1;
-    } else {
-        std::string left = s.substr(0, pos);
-
-        if(left.length() == 0) {
-            start = secp256k1::uint256(1);
-        } else {
-            start = secp256k1::uint256(left);
-        }
-
-        std::string right = s.substr(pos + 1);
-
-        if(right[0] == '+') {
-            end = start + secp256k1::uint256(right.substr(1));
-        } else {
-            end = secp256k1::uint256(right);
-        }
-    }
-
-    return true;
-}
-
-void usage()
-{
-    printf("BitCrackEvo OPTIONS [TARGETS]\n");
-    printf("Where TARGETS is one or more addresses\n\n");
-	
-    printf("--help                  Display this message\n");
-    printf("-c, --compressed        Use compressed points\n");
-    printf("-u, --uncompressed      Use Uncompressed points\n");
-    printf("--compression  MODE     Specify compression where MODE is\n");
-    printf("                          COMPRESSED or UNCOMPRESSED or BOTH\n");
-    printf("-d, --device ID         Use device ID\n");
-    printf("-b, --blocks N          N blocks\n");
-    printf("-t, --threads N         N threads per block\n");
-    printf("-p, --points N          N points per thread\n");
-    printf("-i, --in FILE           Read addresses from FILE, one per line\n");
-    printf("-o, --out FILE          Write keys to FILE\n");
-    printf("-f, --follow            Follow text output\n");
-    printf("--list-devices          List available devices\n");
-    printf("--keyspace KEYSPACE     Specify the keyspace:\n");
-    printf("                          START:END\n");
-    printf("                          START:+COUNT\n");
-    printf("                          START\n");
-    printf("                          :END\n"); 
-    printf("                          :+COUNT\n");
-    printf("                        Where START, END, COUNT are in hex format\n");
-    printf("--stride N              Increment by N keys at a time\n");
-    printf("--share M/N             Divide the keyspace into N equal shares, process the Mth share\n");
-    printf("--continue FILE         Save/load progress from FILE\n");
-}
-
 DeviceParameters getDefaultParameters(const DeviceManager::DeviceInfo &device)
 {
     DeviceParameters p;
@@ -196,39 +130,6 @@ bool readAddressesFromFile(const std::string &fileName, std::vector<std::string>
     } else {
         return util::readLinesFromStream(fileName, lines);
     }
-}
-
-int parseCompressionString(const std::string &s)
-{
-    std::string comp = util::toLower(s);
-
-    if(comp == "both") {
-        return PointCompressionType::BOTH;
-    }
-
-    if(comp == "compressed") {
-        return PointCompressionType::COMPRESSED;
-    }
-
-    if(comp == "uncompressed") {
-        return PointCompressionType::UNCOMPRESSED;
-    }
-
-    throw std::string("Invalid compression format: '" + s + "'");
-}
-
-static std::string getCompressionString(int mode)
-{
-    switch(mode) {
-    case PointCompressionType::BOTH:
-        return "both";
-    case PointCompressionType::UNCOMPRESSED:
-        return "uncompressed";
-    case PointCompressionType::COMPRESSED:
-        return "compressed";
-    }
-
-    throw std::string("Invalid compression setting '" + util::format(mode) + "'");
 }
 
 void writeCheckpoint(secp256k1::uint256 nextKey)
@@ -350,39 +251,6 @@ int run()
     return 0;
 }
 
-/**
- * Parses a string in the form of x/y
- */
-bool parseShare(const std::string &s, uint32_t &idx, uint32_t &total)
-{
-    size_t pos = s.find('/');
-    if(pos == std::string::npos) {
-        return false;
-    }
-
-    try {
-        idx = util::parseUInt32(s.substr(0, pos));
-    } catch(...) {
-        return false;
-    }
-
-    try {
-        total = util::parseUInt32(s.substr(pos + 1));
-    } catch(...) {
-        return false;
-    }
-
-    if(idx == 0 || total == 0) {
-        return false;
-    }
-
-    if(idx > total) {
-        return false;
-    }
-
-    return true;
-}
-
 int main(int argc, char **argv)
 {
     bool optCompressed = false;
@@ -398,7 +266,7 @@ int main(int argc, char **argv)
 
     // Catch --help first
     for(int i = 1; i < argc; i++) {
-        if(std::string(argv[i]) == "--help") {
+        if(std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
             usage();
             return 0;
         }

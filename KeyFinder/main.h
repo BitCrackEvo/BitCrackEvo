@@ -9,6 +9,8 @@
 #include "CmdParse.h"
 #include "Logger.h"
 #include "ConfigFile.h"
+#include "usage.h"
+#include "argParser.h"
 
 #include "DeviceManager.h"
 
@@ -70,7 +72,6 @@ static uint64_t _startTime = 0;
 void resultCallback(KeySearchResult info);
 void statusCallback(KeySearchStatus info);
 bool parseKeyspace(const std::string &s, secp256k1::uint256 &start, secp256k1::uint256 &end);
-void usage();
 
 /**
  Finds default parameters depending on the device
