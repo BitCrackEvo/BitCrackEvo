@@ -125,6 +125,7 @@ dir_logger:
 
 dir_addrgen:	dir_cmdparse dir_addressutil dir_secp256k1lib
 	make --directory AddrGen
+
 dir_clunittest:	dir_clutil
 	make --directory CLUnitTests
 
