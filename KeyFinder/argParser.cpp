@@ -74,7 +74,7 @@ int parseCompressionString(const std::string &s)
     throw std::string("Invalid compression format: '" + s + "'");
 }
 
-static std::string getCompressionString(int mode)
+std::string getCompressionString(int mode)
 {
     switch(mode) {
     case PointCompressionType::BOTH:
