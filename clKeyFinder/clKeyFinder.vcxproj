@@ -179,6 +179,8 @@
     <ClCompile Include="..\KeyFinder\ConfigFile.cpp" />
     <ClCompile Include="..\KeyFinder\DeviceManager.cpp" />
     <ClCompile Include="..\KeyFinder\main.cpp" />
+    <ClCompile Include="..\KeyFinder\argParser.cpp" />
+    <ClCompile Include="..\KeyFinder\usage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AddressUtil\AddressUtil.vcxproj">
@@ -209,6 +211,8 @@
   <ItemGroup>
     <ClInclude Include="..\KeyFinder\ConfigFile.h" />
     <ClInclude Include="..\KeyFinder\DeviceManager.h" />
+    <ClInclude Include="..\KeyFinder\argParser.h" />
+    <ClInclude Include="..\KeyFinder\usage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
