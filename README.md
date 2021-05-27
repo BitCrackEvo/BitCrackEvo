@@ -15,7 +15,7 @@ BitCrackEvo is a high performance, open source, cross platform GPU tool for sear
 
 ## Download
 * **[Binary releases](https://github.com/BitCrackEvo/BitCrackEvo/releases)**
-* **[Build from source](https://github.com/BitCrackEvo/BitCrackEvo/wiki)**
+* **[Build from source](https://github.com/BitCrackEvo/BitCrackEvo/wiki/Build)**
 
 ## Usage
 The preferred way to configure the tool is the [command line interface](https://github.com/BitCrackEvo/BitCrackEvo/wiki/Usage). the [JSON config file](https://github.com/BitCrackEvo/BitCrackEvo/wiki/Usage) is not available for now.
