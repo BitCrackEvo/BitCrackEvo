@@ -74,12 +74,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>clBitCrack</TargetName>
+    <TargetName>clBitCrackEvo</TargetName>
     <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>clBitCrack</TargetName>
+    <TargetName>clBitCrackEvo</TargetName>
     <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
