@@ -164,6 +164,8 @@
     <ClCompile Include="DeviceManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ConfigFile.cpp" />
+    <ClCompile Include="argParser.cpp" />
+    <ClCompile Include="usage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AddressUtil\AddressUtil.vcxproj">
@@ -194,6 +196,8 @@
   <ItemGroup>
     <ClInclude Include="ConfigFile.h" />
     <ClInclude Include="DeviceManager.h" />
+    <ClInclude Include="argParser.h" />
+    <ClInclude Include="usage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
