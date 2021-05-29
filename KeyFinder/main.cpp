@@ -264,7 +264,11 @@ int main(int argc, char **argv)
     uint32_t shareIdx = 0;
     uint32_t numShares = 0;
 
-    // Catch --help first
+    printf("+-----------------------------------------------------------------+\n");
+    printf("|                        BitCrackEvo V0.02                        |\n");
+    printf("+-----------------------------------------------------------------+\n");
+
+    // Catch --help or -h first
     for(int i = 1; i < argc; i++) {
         if(std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
             usage();
