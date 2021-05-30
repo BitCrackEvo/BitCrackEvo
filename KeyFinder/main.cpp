@@ -147,11 +147,11 @@ void writeCheckpoint(secp256k1::uint256 nextKey)
     tmp << "start=" << _config.startKey.toString() << std::endl;
     tmp << "next=" << nextKey.toString() << std::endl;
     tmp << "end=" << _config.endKey.toString() << std::endl;
-    tmp << "blocks=" << _config.blocks << std::endl;
-    tmp << "threads=" << _config.threads << std::endl;
-    tmp << "points=" << _config.pointsPerThread << std::endl;
+    tmp << "blocks=" << formatUIntList(_config.blocks, ',') << std::endl;
+    tmp << "threads=" << formatUIntList(_config.threads, ',') << std::endl;
+    tmp << "points=" << formatUIntList(_config.pointsPerThread, ',') << std::endl;
     tmp << "compression=" << getCompressionString(_config.compression) << std::endl;
-    tmp << "device=" << _config.device << std::endl;
+    tmp << "devices=" << formatUIntList(_config.devices, ',') << std::endl;
     tmp << "elapsed=" << (_config.elapsed + util::getSystemTime() - _startTime) << std::endl;
     tmp << "stride=" << _config.stride.toString();
     tmp.close();
@@ -177,14 +177,29 @@ void readCheckpointFile()
     _config.nextKey = secp256k1::uint256(entries["next"].value);
     _config.endKey = secp256k1::uint256(entries["end"].value);
 
-    if(_config.threads == 0 && entries.find("threads") != entries.end()) {
-        _config.threads = util::parseUInt32(entries["threads"].value);
+    if(_config.threads.size() == 0 && entries.find("threads") != entries.end()) {
+        //_config.threads = util::parseUInt32(entries["threads"].value);
+        if (!parseUIntList(entries["threads"].value, _config.threads, ',')){
+            Logger::log(LogLevel::Error, "Can not read threads value in checkpoint file");
+        }
     }
-    if(_config.blocks == 0 && entries.find("blocks") != entries.end()) {
-        _config.blocks = util::parseUInt32(entries["blocks"].value);
+    if(_config.blocks.size() == 0 && entries.find("blocks") != entries.end()) {
+        //_config.blocks = util::parseUInt32(entries["blocks"].value);
+        if (!parseUIntList(entries["blocks"].value, _config.blocks, ',')){
+            Logger::log(LogLevel::Error, "Can not read blocks value in checkpoint file");
+        }
     }
-    if(_config.pointsPerThread == 0 && entries.find("points") != entries.end()) {
-        _config.pointsPerThread = util::parseUInt32(entries["points"].value);
+    if(_config.pointsPerThread.size() == 0 && entries.find("points") != entries.end()) {
+        //_config.pointsPerThread = util::parseUInt32(entries["points"].value);
+        if (!parseUIntList(entries["points"].value, _config.pointsPerThread, ',')){
+            Logger::log(LogLevel::Error, "Can not read points value in checkpoint file");
+        }
+    }
+    if(_config.devices.size() == 0 && entries.find("devices") != entries.end()) {
+        //_config.pointsPerThread = util::parseUInt32(entries["points"].value);
+        if (!parseUIntList(entries["devices"].value, _config.devices, ',')){
+            Logger::log(LogLevel::Error, "Can not read devices value in checkpoint file");
+        }
     }
     if(entries.find("compression") != entries.end()) {
         _config.compression = parseCompressionString(entries["compression"].value);
@@ -201,9 +216,40 @@ void readCheckpointFile()
 
 int run()
 {
-    if(_config.device < 0 || _config.device >= _devices.size()) {
-        Logger::log(LogLevel::Error, "device " + util::format(_config.device) + " does not exist");
-        return 1;
+    // Verify devices exists
+    for (int d = 0; d < _config.devices.size(); d++) {
+        if(_config.devices[d] < 0 || _config.devices[d] >= _devices.size()) {
+            Logger::log(LogLevel::Error, "device " + util::format(_config.devices[d]) + " does not exist.");
+            return 1;
+        }
+        
+        for (int e = 0; e < _config.devices.size(); e++) {
+            if(_config.devices[d] == _config.devices[e] && d != e) {
+                Logger::log(LogLevel::Error, "Device " + util::format(_config.devices[d]) + " is duplicated.");
+                return 1;
+            }
+        }
+    }
+
+    // Verify blocks
+    if(_config.blocks.size() != _config.devices.size()) {
+        for (int b =_config.blocks.size(); b < _config.devices.size(); b++) {
+            _config.blocks.push_back(0);
+        }
+    }
+
+    // Verify threads
+    if(_config.threads.size() != _config.devices.size()) {
+        for (int b =_config.threads.size(); b < _config.devices.size(); b++) {
+            _config.threads.push_back(0);
+        }
+    }
+
+    // Verify pointsPerThread
+    if(_config.pointsPerThread.size() != _config.devices.size()) {
+        for (int b =_config.pointsPerThread.size(); b < _config.devices.size(); b++) {
+            _config.pointsPerThread.push_back(0);
+        }
     }
 
     Logger::log(LogLevel::Info, "Compression: " + getCompressionString(_config.compression));
@@ -217,22 +263,62 @@ int run()
         _startTime = util::getSystemTime();
 
         // Use default parameters if they have not been set
-        DeviceParameters params = getDefaultParameters(_devices[_config.device]);
+        for (size_t i = 0; i < _config.devices.size(); i++)
+        {
+            DeviceParameters params = getDefaultParameters(_devices[_config.devices[i]]);
 
-        if(_config.blocks == 0) {
-            _config.blocks = params.blocks;
+            if(_config.blocks[i] == 0) {
+                _config.blocks[i] = params.blocks;
+            }
+
+            if(_config.threads[i] == 0) {
+                _config.threads[i] = params.threads;
+            }
+
+            if(_config.pointsPerThread[i] == 0) {
+                _config.pointsPerThread[i] = params.pointsPerThread;
+            }
         }
 
-        if(_config.threads == 0) {
-            _config.threads = params.threads;
+        std::string devicesFormatedList;
+        for (size_t i = 0; i < _config.devices.size(); i++) {
+            devicesFormatedList += std::to_string(_config.devices[i]);
+            if (i != _config.devices.size()-1) {
+                devicesFormatedList += "\t";
+            }
         }
+        Logger::log(LogLevel::Info, "Devices:\t" + devicesFormatedList);
 
-        if(_config.pointsPerThread == 0) {
-            _config.pointsPerThread = params.pointsPerThread;
+        std::string blocksFormatedList;
+        for (size_t i = 0; i < _config.blocks.size(); i++) {
+            blocksFormatedList += std::to_string(_config.blocks[i]);
+            if (i != _config.blocks.size()-1) {
+                blocksFormatedList += "\t";
+            }
         }
+        Logger::log(LogLevel::Info, "Blocks:\t" + blocksFormatedList);
+
+        std::string threadsFormatedList;
+        for (size_t i = 0; i < _config.threads.size(); i++) {
+            threadsFormatedList += std::to_string(_config.threads[i]);
+            if (i != _config.threads.size()-1) {
+                threadsFormatedList += "\t";
+            }
+        }
+        Logger::log(LogLevel::Info, "Threads:\t" + threadsFormatedList);
+    
+        std::string pointsPerThreadFormatedList;
+        for (size_t i = 0; i < _config.pointsPerThread.size(); i++) {
+            pointsPerThreadFormatedList += std::to_string(_config.pointsPerThread[i]);
+            if (i != _config.pointsPerThread.size()-1) {
+                pointsPerThreadFormatedList += "\t";
+            }
+        }
+        Logger::log(LogLevel::Info, "Points:\t" + pointsPerThreadFormatedList);
 
         // Get device context
-        KeySearchDevice *d = getDeviceContext(_devices[_config.device], _config.blocks, _config.threads, _config.pointsPerThread);
+        //KeySearchDevice *d = getDeviceContext(_devices[_config.device], _config.blocks, _config.threads, _config.pointsPerThread);
+        KeySearchDevice *d = getDeviceContext(_devices[_config.devices[0]], _config.blocks[0], _config.threads[0], _config.pointsPerThread[0]);
 
         KeyFinder f(_config.nextKey, _config.endKey, _config.compression, d, _config.stride);
 
@@ -268,6 +354,7 @@ int main(int argc, char **argv)
     bool optThreads = false;
     bool optBlocks = false;
     bool optPoints = false;
+    bool optDevices = false;
 
     uint32_t shareIdx = 0;
     uint32_t numShares = 0;
@@ -337,16 +424,17 @@ int main(int argc, char **argv)
 
         try {
             if(optArg.equals("-t", "--threads")) {
-                _config.threads = util::parseUInt32(optArg.arg);
-                optThreads = true;
+                //_config.threads = util::parseUInt32(optArg.arg);
+                optThreads = parseUIntList(optArg.arg, _config.threads, ',');
             } else if(optArg.equals("-b", "--blocks")) {
-                _config.blocks = util::parseUInt32(optArg.arg);
-                optBlocks = true;
+                //_config.blocks = util::parseUInt32(optArg.arg);
+                optBlocks = parseUIntList(optArg.arg, _config.blocks, ',');
             } else if(optArg.equals("-p", "--points")) {
-                _config.pointsPerThread = util::parseUInt32(optArg.arg);
-                optPoints = true;
+                //_config.pointsPerThread = util::parseUInt32(optArg.arg);
+                optPoints = parseUIntList(optArg.arg, _config.pointsPerThread, ',');
             } else if(optArg.equals("-d", "--device")) {
-                _config.device = util::parseUInt32(optArg.arg);
+                //_config.device = util::parseUInt32(optArg.arg);
+                optDevices = parseUIntList(optArg.arg, _config.devices, ',');
             } else if(optArg.equals("-c", "--compressed")) {
                 optCompressed = true;
             } else if(optArg.equals("-u", "--uncompressed")) {
@@ -419,10 +507,45 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    // Verify device exists
-    if(_config.device < 0 || _config.device >= _devices.size()) {
-        Logger::log(LogLevel::Error, "device " + util::format(_config.device) + " does not exist");
-        return 1;
+    // Verify device min number
+    if (_config.devices.size() == 0) {
+        _config.devices.push_back(0);
+    }
+
+    // Verify devices exists
+    for (int d = 0; d < _config.devices.size(); d++) {
+        if(_config.devices[d] < 0 || _config.devices[d] >= _devices.size()) {
+            Logger::log(LogLevel::Error, "device " + util::format(_config.devices[d]) + " does not exist.");
+            return 1;
+        }
+        
+        for (int e = 0; e < _config.devices.size(); e++) {
+            if(_config.devices[d] == _config.devices[e] && d != e) {
+                Logger::log(LogLevel::Error, "Device " + util::format(_config.devices[d]) + " is duplicated.");
+                return 1;
+            }
+        }
+    }
+
+    // Verify blocks
+    if(_config.blocks.size() != _config.devices.size()) {
+        for (int b =_config.blocks.size(); b < _config.devices.size(); b++) {
+            _config.blocks.push_back(0);
+        }
+    }
+
+    // Verify threads
+    if(_config.threads.size() != _config.devices.size()) {
+        for (int b =_config.threads.size(); b < _config.devices.size(); b++) {
+            _config.threads.push_back(0);
+        }
+    }
+
+    // Verify pointsPerThread
+    if(_config.pointsPerThread.size() != _config.devices.size()) {
+        for (int b =_config.pointsPerThread.size(); b < _config.devices.size(); b++) {
+            _config.pointsPerThread.push_back(0);
+        }
     }
 
     // Parse operands

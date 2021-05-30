@@ -37,7 +37,42 @@ bool parseKeyspace(const std::string &s, secp256k1::uint256 &start, secp256k1::u
     return true;
 }
 
-bool parseDevices(const std::string &s, secp256k1::uint256 &start, secp256k1::uint256 &end)
+bool parseUIntList(const std::string &s, std::vector<unsigned int> &v, char delimiter)
+{
+    //std::vector<unsigned int> v;
+ 
+    std::stringstream ss(s);
+ 
+    while (ss.good()) {
+        std::string substr;
+        std::getline(ss, substr, delimiter);
+        unsigned int num = util::parseUInt32(substr);
+        v.push_back(num);
+    }
+ 
+    /*for (size_t i = 0; i < v.size(); i++)
+        std::cout << v[i] << endl;*/
+
+    return true;
+}
+
+std::string formatUIntList(const std::vector<unsigned int> &v, char delimiter)
+{
+    //std::vector<unsigned int> v;
+ 
+    std::ostringstream ss;
+ 
+    for (size_t i = 0; i < v.size(); i++) {
+        ss << v[i];
+        if (i != v.size()-1) {
+            ss << delimiter;
+        }
+    }
+
+    return ss.str();
+}
+
+bool parseList(const std::string &s, secp256k1::uint256 &start, secp256k1::uint256 &end)
 {
     std::vector<std::string> v;
  

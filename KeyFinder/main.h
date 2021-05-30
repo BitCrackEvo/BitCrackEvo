@@ -36,9 +36,12 @@ typedef struct RunConfig {
     uint64_t statusInterval = 1800;
     uint64_t checkpointInterval = 60000;
 
-    unsigned int threads = 0;
-    unsigned int blocks = 0;
-    unsigned int pointsPerThread = 0;
+    //unsigned int threads = 0;
+    std::vector<unsigned int> threads;
+    //unsigned int blocks = 0;
+    std::vector<unsigned int> blocks;
+    //unsigned int pointsPerThread = 0;
+    std::vector<unsigned int> pointsPerThread;
     
     int compression = PointCompressionType::COMPRESSED;
  
@@ -48,7 +51,8 @@ typedef struct RunConfig {
 
     std::string checkpointFile = "";
 
-    int device = 0;
+    //int device = 0;
+    std::vector<unsigned int> devices;
 
     std::string resultsFile = "";
 
