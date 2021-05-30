@@ -112,6 +112,14 @@ static KeySearchDevice *getDeviceContext(DeviceManager::DeviceInfo &device, int 
     return NULL;
 }
 
+/*
++---+---------+--------+-------+-------------+-------------------+-------------+
+| ID       GPU  Tragets  Memory         Speed               Total        Time  |
++---+---------+--------+-------+-------------+-------------------+-------------+
+|  0  RTX 3090        1    9501 107.58 MKey/s  15,000,000,000,000  00:10:52:31 |
++---+---------+--------+-------+-------------+-------------------+-------------+
+*/
+
 static void printDeviceList(const std::vector<DeviceManager::DeviceInfo> &devices)
 {
     for(int i = 0; i < devices.size(); i++) {
