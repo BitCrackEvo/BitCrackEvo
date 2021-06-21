@@ -10,7 +10,7 @@
 BitCrackEvo is a high performance, open source, cross platform GPU tool for search Bitcoin private keys from address. Official binaries are available for Windows and Linux.
 
 
-> **_IMPORTANT NOTE:_**  Program under developpement. Don't use it for production.
+> **_IMPORTANT NOTE :_**  Program under developpement. Don't use it for production.
 
 
 ## Mining backends
