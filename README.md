@@ -11,6 +11,7 @@ BitCrackEvo is a high performance, open source, cross platform GPU tool for sear
 
 ---
 **IMPORTANT NOTE**
+
 Program under developpement. Don't use it for production.
 ---
 
