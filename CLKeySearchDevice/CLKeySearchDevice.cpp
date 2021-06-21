@@ -578,7 +578,8 @@ void CLKeySearchDevice::generateStartingPoints()
 
 secp256k1::uint256 CLKeySearchDevice::getNextKey()
 {
-    uint64_t totalPoints = (uint64_t)_points * _threads * _blocks;
+    // uint64_t totalPoints = (uint64_t)_points * _threads * _blocks;
+    uint64_t totalPoints = (uint64_t)_points;
 
     return _start + secp256k1::uint256(totalPoints) * _iterations * _stride;
 }
