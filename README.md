@@ -8,7 +8,7 @@
 [![GitHub forks](https://img.shields.io/github/forks/BitCrackEvo/BitCrackEvo.svg)](https://github.com/BitCrackEvo/BitCrackEvo/network)
 
 BitCrackEvo is a high performance, open source, cross platform GPU tool for search Bitcoin private keys from address. Official binaries are available for Windows and Linux.
-You can also use online version at (https://bitcrackevo.github.io/)
+You can also use online version at https://bitcrackevo.github.io/
 
 > **_IMPORTANT NOTE :_**  Program under developpement. Don't use it for production.
 
